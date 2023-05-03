@@ -1,0 +1,39 @@
+version: '3'
+services:
+  # mongo db service
+  mongodb:
+    container_name: db_container
+    image: mongo:latest
+    env_file:
+      - ./.env
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb:/data/db
+    networks:
+      - backend
+
+  app:
+    container_name: myappnest-api
+    image: myappnest
+    build: .
+    env_file:
+      - ./.env
+    ports: 
+      - 3000:3000
+    volumes:
+      - ./:/usr/src/app
+      - node_modules:/usr/src/app/node_modules
+    depends_on:
+      - mongodb
+    networks:
+      - backend
+
+volumes:
+  mongodb: {}
+  node_modules: 
+  node_modules_frontend:
+networks:
+  backend:
+    driver: bridge
